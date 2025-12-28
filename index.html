@@ -1,13 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Gallery</title>
+  <title>My Private Gallery</title>
+
+  <!-- PhotoSwipe CSS -->
+  <link rel="stylesheet" href="photoswipe.css">
 </head>
 <body>
 
 <h1>My Gallery</h1>
-<p>This is my private photo gallery.</p>
+
+<!-- Thumbnails -->
+<div id="gallery">
+  <a href="images/001.jpg" data-pswp-width="3000" data-pswp-height="2000">
+    <img src="images/001.jpg" width="200">
+  </a>
+
+  <a href="images/002.jpg" data-pswp-width="3000" data-pswp-height="2000">
+    <img src="images/002.jpg" width="200">
+  </a>
+</div>
+
+<!-- PhotoSwipe JS -->
+<script src="photoswipe.umd.min.js"></script>
+<script src="gallery.js"></script>
 
 </body>
 </html>
