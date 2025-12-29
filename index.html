@@ -11,6 +11,34 @@
       loading: lazy;
     }
   </style>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111;
+      color: #eee;
+      margin: 0;
+      padding: 40px;
+    }
+  
+    #gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+  
+    #gallery img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+  
+    #gallery img:hover {
+      transform: scale(1.03);
+    }
+  </style>
 </head>
 <body>
 
