@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Private Gallery</title>
+  <meta charset="UTF-8" />
+  <title>My Gallery</title>
 
-  <!-- PhotoSwipe CSS -->
-  <link rel="stylesheet" href="photoswipe.css">
-  <style>
-    #gallery img {
-      loading: lazy;
-    }
-  </style>
+  <link rel="stylesheet" href="photoswipe.css" />
+
   <style>
     body {
-      font-family: system-ui, sans-serif;
-      background: #111;
-      color: #eee;
       margin: 0;
       padding: 40px;
+      background: #111;
+      color: #eee;
+      font-family: system-ui, sans-serif;
     }
-  
+
+    h1 {
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+
     #gallery {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 16px;
     }
-  
+
     #gallery img {
       width: 100%;
       height: 160px;
@@ -34,7 +34,7 @@
       cursor: pointer;
       transition: transform 0.2s ease;
     }
-  
+
     #gallery img:hover {
       transform: scale(1.03);
     }
@@ -43,19 +43,8 @@
 <body>
 
 <h1>My Gallery</h1>
+<div id="gallery"></div>
 
-<!-- Thumbnails -->
-<div id="gallery">
-  <a href="images/001.jpg" data-pswp-width="3000" data-pswp-height="2000">
-    <img src="images/001.jpg" width="200">
-  </a>
-
-  <a href="images/002.jpg" data-pswp-width="3000" data-pswp-height="2000">
-    <img src="images/002.jpg" width="200">
-  </a>
-</div>
-
-<!-- PhotoSwipe JS -->
 <script src="photoswipe-lightbox.umd.min.js"></script>
 <script src="photoswipe.umd.min.js"></script>
 <script src="gallery.js"></script>
