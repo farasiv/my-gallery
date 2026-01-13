@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Personal Gallery</title>
+  <link rel="stylesheet" href="photoswipe.css" />
+  <style>
+    body { margin: 0; padding: 40px; background: #161616; color: #eee; font-family: system-ui, sans-serif; }
+    nav { margin-bottom: 40px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+    nav a { color: #aaa; text-decoration: none; margin-right: 20px; cursor: pointer; transition: 0.2s; }
+    nav a:hover, nav a.active { color: #fff; font-weight: bold; }
+    
+    #gallery { column-count: 3; column-gap: 16px; max-width: 1200px; margin: 0 auto; }
+    #gallery a { display: inline-block; margin-bottom: 16px; width: 100%; }
+    #gallery img { width: 100%; height: auto; display: block; border-radius: 8px; transition: 0.2s; }
+    #gallery img:hover { transform: scale(1.02); }
+
+    @media (max-width: 900px) { #gallery { column-count: 2; } }
+    @media (max-width: 600px) { #gallery { column-count: 1; } }
+
+    /* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */
+
+    /* Album Grid Layout */
+      .album-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Individual Album Card */
+      .album-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        aspect-ratio: 3 / 2;
+        cursor: pointer;
+        background: #222;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .album-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      }
+
+      .album-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.7;
+        transition: 0.3s;
+      }
+
+      .album-card:hover img {
+        opacity: 1;
+      }
+
+      .album-card h2 {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 1.2rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      }
+  </style>
+</head>
+<body>
+
+<nav id="album-menu">
+  <!-- <a onclick="loadAlbum('sevan_may')">Sevan May</a> -->
+  <!-- <a onclick="loadAlbum('victory_park')">Victory Park</a> -->
+</nav>
+
+<div id="home-screen" class="album-grid"></div>
+
+<div id="gallery-view" style="display: none;">
+  <h1 id="album-title"></h1>
+  <div id="gallery"></div>
+</div>
+
+<!-- <h1 id="album-title">Gallery</h1>
+<div id="gallery"></div> -->
+
+<!-- <script src="https://unpkg.com/photoswipe@5.4.3/dist/photoswipe-lightbox.umd.min.js"></script>
+<script src="https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.umd.min.js"></script> -->
+
+<script src="photoswipe-lightbox.umd.min.js"></script>
+<script src="photoswipe.umd.min.js"></script>
+
+<script src="gallery.js"></script>
+</body>
+</html>
