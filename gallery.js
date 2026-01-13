@@ -144,7 +144,7 @@ function loadAlbum(jsonPath) {
     
     // BEAUTIFIER: Adding the Back Button (Arrow)
     title.innerHTML = `
-        <span class="back-arrow" onclick="loadYearView('${year}')" style="cursor:pointer; margin-right:15px; opacity:0.7;">←</span>
+        <span class="back-arrow" onclick="loadYearView('${year}')" style="cursor:pointer; margin-right:13px; opacity:0.7; font-size: 1.35em; font-weight: 900;">←</span>
         ${slug.toUpperCase().replace(/_/g, ' ')}
     `;
 
@@ -180,6 +180,7 @@ function loadAlbum(jsonPath) {
         })
         .catch(err => console.error(err));
 }
+
 
 window.onload = () => {
     loadMenu();

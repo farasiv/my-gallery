@@ -1,30 +1,40 @@
-/* 1. Make HOME and Years (2025, 2026) sit on one horizontal line */
+/* 1. Main Navigation Container */
 #album-menu {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: wrap;      /* Allows items to move to a second line */
     align-items: center;
-    gap: 20px; /* Space between HOME, 2025, 2026 */
-    margin-bottom: 30px; /* Space between menu line and the content below */
-}
-
-/* 2. Ensure Year dropdown triggers look like the HOME link */
-.year-trigger {
-    cursor: pointer;
+    gap: 25px;            /* Horizontal space between HOME, 2025, 2026 */
+    margin-bottom: 40px;  /* Space between the entire menu and the grid below */
     text-transform: uppercase;
-    font-weight: bold;
 }
 
-/* 3. Style for the back arrow button */
+/* 2. Subfolder Container (Dropdowns) */
+.menu-albums {
+    flex-basis: 100%;     /* FORCES this element to a new line */
+    display: none;        /* Controlled by JS toggle */
+}
+
+/* 3. Style for the sub-links inside the dropdown */
+.menu-albums a {
+    margin-right: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s;
+}
+
+.menu-albums a:hover {
+    opacity: 1;
+}
+
+/* 4. Beautiful Back Button Hover */
+.back-arrow {
+    transition: transform 0.2s ease, color 0.2s ease;
+    display: inline-block;
+}
+
 .back-arrow:hover {
-    opacity: 1 !important;
-    color: #ff4500; /* Optional: change color on hover */
-}
-
-/* 4. Ensure album title and back button are vertically centered */
-#album-title {
-    display: flex;
-    align-items: center;
-    text-transform: uppercase;
-    margin-top: 20px;
+    transform: translateX(-5px); /* Subtle nudge to the left */
+    color: #007bff;              /* Or your preferred highlight color */
 }
