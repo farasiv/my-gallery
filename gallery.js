@@ -5,7 +5,6 @@ function toggleYear(yearId, forceState) {
     const element = document.getElementById(yearId);
     if (!element) return;
 
-    // Close all other menus
     document.querySelectorAll('.menu-albums').forEach(el => {
         if (el.id !== yearId) el.style.display = 'none';
     });
@@ -19,42 +18,47 @@ function toggleYear(yearId, forceState) {
     }
 }
 
-// 1. Load the menu links from menu.html
+// 1. Load the menu links and FORCE UPPERCASE
 function loadMenu() {
     fetch('./menu.html')
         .then(response => response.text())
         .then(data => {
-            document.getElementById('album-menu').innerHTML = data;
+            const menuContainer = document.getElementById('album-menu');
+            menuContainer.innerHTML = data;
+            // Beautifier: Force all dropdown links to be uppercase
+            menuContainer.querySelectorAll('a').forEach(a => {
+                a.style.textTransform = 'uppercase';
+            });
         })
         .catch(err => console.error("Menu failed to load:", err));
 }
 
-// 2. HOME SCREEN: Shows Year Folders
+// 2. HOME SCREEN: Forced horizontal grid
 async function showHome() {
     const homeScreen = document.getElementById('home-screen');
     const galleryView = document.getElementById('gallery-view');
 
-    // Close all dropdowns when going home
     document.querySelectorAll('.menu-albums').forEach(el => el.style.display = 'none');
 
-    homeScreen.style.display = 'grid'; // Ensure grid layout is active
+    homeScreen.style.display = 'grid';
+    // Forced Horizontal Alignment: repeat as many columns as fit
+    homeScreen.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+    homeScreen.style.gap = '20px'; 
+    
     galleryView.style.display = 'none';
     homeScreen.innerHTML = '<p>Loading years...</p>';
 
     try {
         const response = await fetch('./data/albums_list.json');
         const structure = await response.json(); 
-        
         homeScreen.innerHTML = ''; 
 
-        // Sort years descending (2026, 2025...)
         const years = Object.keys(structure).sort((a, b) => b - a);
 
         for (const year of years) {
             const albumsInYear = structure[year];
             if (albumsInYear.length === 0) continue;
 
-            // Get preview from the first album in that year
             const firstAlbum = albumsInYear[0];
             const albRes = await fetch(firstAlbum.file);
             const images = await albRes.json();
@@ -63,7 +67,7 @@ async function showHome() {
             const thumbPath = `images/${year}/${slug}/thumbs/${images[0].file}`;
 
             const card = document.createElement('div');
-            card.className = 'album-card'; // Using the standard album-card class for spacing
+            card.className = 'album-card';
             card.onclick = () => loadYearView(year);
             
             card.innerHTML = `
@@ -77,28 +81,25 @@ async function showHome() {
         }
     } catch (e) {
         homeScreen.innerHTML = '<p>Error loading years.</p>';
-        console.error(e);
     }
 }
 
-// 3. YEAR VIEW: Shows Albums inside that year
-// FIX: We keep the 'home-screen' grid style so cards don't touch
+// 3. YEAR VIEW: Forced horizontal grid
 async function loadYearView(year) {
     const homeScreen = document.getElementById('home-screen');
     const galleryView = document.getElementById('gallery-view');
     
-    // UI Setup: We stay in the "Grid" mode
-    homeScreen.style.display = 'grid'; 
+    homeScreen.style.display = 'grid';
+    homeScreen.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
     galleryView.style.display = 'none';
-    homeScreen.innerHTML = '<p>Loading albums...</p>';
-
-    // Close dropdown per hierarchy logic
+    
+    homeScreen.innerHTML = 'Loading albums...';
     toggleYear(`year-${year}`, 'close'); 
 
     try {
         const response = await fetch('./data/albums_list.json');
         const structure = await response.json();
-        const albums = structure[year]; // This array maintains the order from your JSON
+        const albums = structure[year];
 
         homeScreen.innerHTML = ''; 
         
@@ -108,7 +109,7 @@ async function loadYearView(year) {
             const albumSlug = album.file.split('/').pop().replace('.json', '');
             
             const card = document.createElement('div');
-            card.className = 'album-card'; // This class provides the padding/margins you like
+            card.className = 'album-card'; 
             card.onclick = () => loadAlbum(album.file);
             
             card.innerHTML = `
@@ -121,12 +122,11 @@ async function loadYearView(year) {
             homeScreen.appendChild(card);
         }
     } catch (err) {
-        homeScreen.innerHTML = '<p>Error loading albums.</p>';
         console.error(err);
     }
 }
 
-// 4. PHOTO VIEW: Shows individual photos
+// 4. PHOTO VIEW: Added Back Button
 function loadAlbum(jsonPath) {
     const homeScreen = document.getElementById('home-screen');
     const galleryView = document.getElementById('gallery-view');
@@ -142,16 +142,18 @@ function loadAlbum(jsonPath) {
     const year = parts[1];
     const slug = parts[2].replace('.json', '');
     
-    title.innerText = slug.toUpperCase().replace(/_/g, ' ');
+    // BEAUTIFIER: Adding the Back Button (Arrow)
+    title.innerHTML = `
+        <span class="back-arrow" onclick="loadYearView('${year}')" style="cursor:pointer; margin-right:15px; opacity:0.7;">←</span>
+        ${slug.toUpperCase().replace(/_/g, ' ')}
+    `;
 
-    // Open the menu dropdown for the current year
     toggleYear(`year-${year}`, 'open');
 
     fetch(`${jsonPath}?v=${new Date().getTime()}`)
         .then(response => response.json())
         .then(images => {
             gallery.innerHTML = '';
-
             images.forEach(img => {
                 const link = document.createElement('a');
                 link.href = img.full_url; 
@@ -159,11 +161,9 @@ function loadAlbum(jsonPath) {
                 link.dataset.pswpHeight = img.height;
                 link.target = "_blank";
                 link.rel = "noopener noreferrer";
-
                 const image = document.createElement('img');
                 image.src = `images/${year}/${slug}/thumbs/${img.file}`;
                 image.loading = 'lazy';
-
                 link.appendChild(image);
                 gallery.appendChild(link);
             });
@@ -178,13 +178,9 @@ function loadAlbum(jsonPath) {
                 lightbox.init();
             }
         })
-        .catch(err => {
-            gallery.innerHTML = '<p>Error loading photos.</p>';
-            console.error(err);
-        });
+        .catch(err => console.error(err));
 }
 
-// 5. Initial startup
 window.onload = () => {
     loadMenu();
     showHome();

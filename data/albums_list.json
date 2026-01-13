@@ -28,5 +28,11 @@
       "title": "Yerevan Walks January 2025",
       "file": "data/2025/yerevan_walks_january_2025.json"
     }
+  ],
+  "2026": [
+    {
+      "title": "January 2026",
+      "file": "data/2026/january_2026.json"
+    }
   ]
 }

@@ -1,91 +1,30 @@
-/* General Page Styling */
-body {
-    background-color: #0b0b0b;
-    color: #e0e0e0;
-    font-family: 'Inter', system-ui, sans-serif;
-    margin: 0;
-}
-
-/* The Year Card Grid */
-#home-screen {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
-    padding: 40px;
-}
-
-/* The 4-Photo "Cool" Preview Grid */
-.year-card {
-    background: #1a1a1a;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s ease, border-color 0.3s ease;
-    border: 1px solid #333;
-}
-
-.year-card:hover {
-    transform: translateY(-5px);
-    border-color: #555;
-}
-
-.folder-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 2px;
-    height: 200px;
-    background: #222;
-}
-
-.folder-grid img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.album-info {
-    padding: 15px;
-    text-align: center;
-}
-
-.album-info h2 {
-    margin: 0;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-}
-
-/* Accordion Menu Styling */
-.menu-year {
-    cursor: pointer;
-    padding: 12px 20px;
-    font-weight: 600;
-    border-bottom: 1px solid #222;
-    background: #111;
+/* 1. Make HOME and Years (2025, 2026) sit on one horizontal line */
+#album-menu {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px; /* Space between HOME, 2025, 2026 */
+    margin-bottom: 30px; /* Space between menu line and the content below */
 }
 
-/* Fixed Horizontal Menu */
-.menu-albums {
-    background: #111;
-    display: none; /* Controlled by JS */
-    padding: 5px 10px;
-    border-bottom: 1px solid #333;
-    white-space: nowrap; /* Keeps them on one line */
-    overflow-x: auto;    /* Adds scroll if there are too many albums */
-}
-
-.menu-albums a {
-    display: inline-block; /* THIS IS THE FIX: Keeps them horizontal */
-    padding: 8px 15px;
-    color: #999 !important;
-    text-decoration: none;
-    font-size: 0.85rem;
+/* 2. Ensure Year dropdown triggers look like the HOME link */
+.year-trigger {
+    cursor: pointer;
     text-transform: uppercase;
+    font-weight: bold;
 }
 
-.menu-albums a:hover {
-    color: #fff !important;
-    background: #1a1a1a;
+/* 3. Style for the back arrow button */
+.back-arrow:hover {
+    opacity: 1 !important;
+    color: #ff4500; /* Optional: change color on hover */
+}
+
+/* 4. Ensure album title and back button are vertically centered */
+#album-title {
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    margin-top: 20px;
 }
