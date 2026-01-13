@@ -1,9 +1,32 @@
-[
-  "childrens_railway",
-  "february_2025",
-  "sevan_may_2025",
-  "spring_2025",
-  "victory_park",
-  "winter_2025",
-  "yerevan_walks_january_2025"
-]
+{
+  "2025": [
+    {
+      "title": "Childrens Railway",
+      "file": "data/2025/childrens_railway.json"
+    },
+    {
+      "title": "February 2025",
+      "file": "data/2025/february_2025.json"
+    },
+    {
+      "title": "Sevan May 2025",
+      "file": "data/2025/sevan_may_2025.json"
+    },
+    {
+      "title": "Spring 2025",
+      "file": "data/2025/spring_2025.json"
+    },
+    {
+      "title": "Victory Park",
+      "file": "data/2025/victory_park.json"
+    },
+    {
+      "title": "Winter 2025",
+      "file": "data/2025/winter_2025.json"
+    },
+    {
+      "title": "Yerevan Walks January 2025",
+      "file": "data/2025/yerevan_walks_january_2025.json"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+/* General Page Styling */
+body {
+    background-color: #0b0b0b;
+    color: #e0e0e0;
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0;
+}
+
+/* The Year Card Grid */
+#home-screen {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 40px;
+}
+
+/* The 4-Photo "Cool" Preview Grid */
+.year-card {
+    background: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    border: 1px solid #333;
+}
+
+.year-card:hover {
+    transform: translateY(-5px);
+    border-color: #555;
+}
+
+.folder-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+    height: 200px;
+    background: #222;
+}
+
+.folder-grid img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.album-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.album-info h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+/* Accordion Menu Styling */
+.menu-year {
+    cursor: pointer;
+    padding: 12px 20px;
+    font-weight: 600;
+    border-bottom: 1px solid #222;
+    background: #111;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Fixed Horizontal Menu */
+.menu-albums {
+    background: #111;
+    display: none; /* Controlled by JS */
+    padding: 5px 10px;
+    border-bottom: 1px solid #333;
+    white-space: nowrap; /* Keeps them on one line */
+    overflow-x: auto;    /* Adds scroll if there are too many albums */
+}
+
+.menu-albums a {
+    display: inline-block; /* THIS IS THE FIX: Keeps them horizontal */
+    padding: 8px 15px;
+    color: #999 !important;
+    text-decoration: none;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.menu-albums a:hover {
+    color: #fff !important;
+    background: #1a1a1a;
+}
