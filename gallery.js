@@ -26,11 +26,19 @@ function loadMenu() {
             const menuContainer = document.getElementById('album-menu');
             menuContainer.innerHTML = data;
             // Beautifier: Force all dropdown links to be uppercase
-            menuContainer.querySelectorAll('a').forEach(a => {
-                a.style.textTransform = 'uppercase';
+        //     menuContainer.querySelectorAll('a').forEach(a => {
+        //         a.style.textTransform = 'uppercase';
+        //     });
+        // })
+        // .catch(err => console.error("Menu failed to load:", err));
+        menuContainer.querySelectorAll('div').forEach(el => {
+                if (el.getAttribute('onclick')?.includes('toggleYear')) {
+                    el.classList.add('menu-year');
+                }
             });
         })
         .catch(err => console.error("Menu failed to load:", err));
+        
 }
 
 // 2. HOME SCREEN: Forced horizontal grid

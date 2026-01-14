@@ -7,9 +7,9 @@
   <link rel="stylesheet" href="style.css">
   <style>
     body { margin: 0; padding: 40px; background: #161616; color: #eee; font-family: system-ui, sans-serif; }
-    nav { margin-bottom: 40px; border-bottom: 1px solid #333; padding-bottom: 20px; }
-    nav a { color: #aaa; text-decoration: none; margin-right: 20px; cursor: pointer; transition: 0.2s; }
-    nav a:hover, nav a.active { color: #fff; font-weight: bold; }
+    /* nav { margin-bottom: 40px; border-bottom: 1px solid #333; padding-bottom: 20px; } */
+    /* nav a { color: #aaa; text-decoration: none; margin-right: 20px; cursor: pointer; transition: 0.2s; }
+    nav a:hover, nav a.active { color: #fff; font-weight: bold; } */
     
     #gallery { column-count: 3; column-gap: 16px; max-width: 1200px; margin: 0 auto; }
     #gallery a { display: inline-block; margin-bottom: 16px; width: 100%; }
@@ -20,6 +20,55 @@
     @media (max-width: 600px) { #gallery { column-count: 1; } }
 
     /* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */
+
+    /* 1. Main Navigation Container */
+      #album-menu {
+          display: flex;
+          flex-wrap: wrap;      /* Allows sub-menu to drop to a new line */
+          align-items: center;
+          gap: 30px;            
+          margin-bottom: 40px;
+          border-bottom: 1px solid #333;
+          padding-bottom: 20px;
+      }
+
+      /* 2. Style for ALL clickable items (Home and Years) */
+      nav a, 
+      .menu-year { 
+          color: #aaa; 
+          text-decoration: none; 
+          cursor: pointer; 
+          transition: 0.2s; 
+          font-weight: normal;
+          text-transform: uppercase;
+          display: inline-block;
+          order: 1; /* Forces Home and Years to stay together at the start */
+      }
+
+      /* 3. The Hover Fix */
+      nav a:hover, 
+      .menu-year:hover { 
+          color: #fff !important; 
+      }
+
+      /* 4. The Sub-menu (Children's Railway, etc.) */
+      .menu-albums {
+          flex-basis: 100%;    /* Forces this div to take up a full line */
+          order: 2;            /* Forces it to appear AFTER the years */
+          display: none;       /* Managed by JS */
+          padding-top: 1px;
+          padding-bottom: 1px;
+      }
+
+      /* 5. Sub-menu Links */
+      .menu-albums a {
+          font-weight: normal;
+          font-size: 1em;
+          margin-right: 20px;
+          color: #888;
+      }
+
+      /* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */
 
     /* Album Grid Layout */
       .album-grid {
