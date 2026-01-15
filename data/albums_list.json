@@ -1,37 +1,37 @@
 {
   "2025": [
     {
-      "title": "Childrens Railway",
+      "title": "CHILDREN'S RAILWAY",
       "file": "data/2025/childrens_railway.json"
     },
     {
-      "title": "February 2025",
+      "title": "FEBRUARY 2025",
       "file": "data/2025/february_2025.json"
     },
     {
-      "title": "Sevan May 2025",
+      "title": "SEVAN MAY 2025",
       "file": "data/2025/sevan_may_2025.json"
     },
     {
-      "title": "Spring 2025",
+      "title": "SPRING 2025",
       "file": "data/2025/spring_2025.json"
     },
     {
-      "title": "Victory Park",
+      "title": "VICTORY PARK",
       "file": "data/2025/victory_park.json"
     },
     {
-      "title": "Winter 2025",
+      "title": "WINTER 2025",
       "file": "data/2025/winter_2025.json"
     },
     {
-      "title": "Yerevan Walks January 2025",
+      "title": "YEREVAN WALKS JANUARY 2025",
       "file": "data/2025/yerevan_walks_january_2025.json"
     }
   ],
   "2026": [
     {
-      "title": "January 2026",
+      "title": "JANUARY 2026",
       "file": "data/2026/january_2026.json"
     }
   ]

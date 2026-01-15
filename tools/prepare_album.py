@@ -58,7 +58,7 @@ def rebuild_master_files():
                 if album_folder.is_dir() and (album_folder / "thumbs").exists():
                     album_slug = album_folder.name
                     # Keep the name exactly as the folder is named, just replace underscores
-                    display_name = album_slug.replace('_', ' ').title()
+                    display_name = album_slug.replace('_', ' ').upper()
                     
                     structure[year].append({
                         "title": display_name,
@@ -81,6 +81,8 @@ def rebuild_master_files():
     with open(MENU_FILE, "w", encoding="utf-8") as f:
         f.write(menu_html)
 
+    print(f"✅ Master files refreshed.")
+    
 def rename_album():
     """Renames an album within a year"""
     year = input("Enter the YEAR of the album (e.g. 2025): ").strip()
