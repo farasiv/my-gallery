@@ -5,6 +5,10 @@
       "file": "data/2025/childrens_railway.json"
     },
     {
+      "title": "EVENTIDE",
+      "file": "data/2025/eventide.json"
+    },
+    {
       "title": "FEBRUARY 2025",
       "file": "data/2025/february_2025.json"
     },
