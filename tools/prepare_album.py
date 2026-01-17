@@ -23,53 +23,48 @@ IMAGE_ROOT.mkdir(exist_ok=True)
 INCOMING_DIR.mkdir(exist_ok=True)
 # ----------------------------------------
 
+def select_from_options(options, prompt):
+    """Generates a numbered list in the terminal for selection."""
+    print(f"\nAvailable {prompt}s:")
+    for i, opt in enumerate(options, 1):
+        print(f"[{i}] {opt}")
+    choice = input(f"Select {prompt} (number) or press Enter to type new: ").strip()
+    
+    if not choice:
+        return None
+    try:
+        return options[int(choice) - 1]
+    except (ValueError, IndexError):
+        return None
+
 def upload_to_imgbb(image_path):
-    """Uploads an image to ImgBB and returns the direct display URL"""
     url = "https://api.imgbb.com/1/upload"
     try:
         with open(image_path, "rb") as file:
             base64_image = base64.b64encode(file.read())
-            payload = {
-                "key": API_KEY,
-                "image": base64_image,
-            }
+            payload = {"key": API_KEY, "image": base64_image}
             res = requests.post(url, data=payload)
-            if res.status_code == 200:
-                return res.json()['data']['url']
-            else:
-                print(f"❌ ImgBB Upload Error: {res.text}")
-                return None
-    except Exception as e:
-        print(f"❌ Connection Error: {e}")
-        return None
+            return res.json()['data']['url'] if res.status_code == 200 else None
+    except Exception: return None
 
 def rebuild_master_files():
-    """Groups albums by year for a nested website menu"""
     print("\nRefreshing master files...")
-    
-    structure = {} # Dictionary to hold { "2025": [album1, album2], "2026": [...] }
-    
+    structure = {} 
     for year_folder in sorted(IMAGE_ROOT.iterdir()):
         if year_folder.is_dir() and year_folder.name.isdigit():
             year = year_folder.name
             structure[year] = []
-            
             for album_folder in sorted(year_folder.iterdir()):
                 if album_folder.is_dir() and (album_folder / "thumbs").exists():
                     album_slug = album_folder.name
-                    # Keep the name exactly as the folder is named, just replace underscores
                     display_name = album_slug.replace('_', ' ').upper()
-                    
-                    structure[year].append({
-                        "title": display_name,
-                        "file": f"data/{year}/{album_slug}.json"
-                    })
-
-    # Save as a nested JSON
+                    if "CHILDRENS RAILWAY" in display_name:
+                        display_name = display_name.replace("CHILDRENS", "CHILDREN'S")
+                    structure[year].append({"title": display_name, "file": f"data/{year}/{album_slug}.json"})
+    
     with open(DATA_DIR / "albums_list.json", "w", encoding="utf-8") as f:
         json.dump(structure, f, indent=2)
 
-    # Build Nested HTML Menu
     menu_html = '<a onclick="showHome()">HOME</a>\n'
     for year in sorted(structure.keys(), reverse=True):
         menu_html += f'<div class="menu-year" onclick="toggleYear(\'year-{year}\')">{year} ▼</div>\n'
@@ -80,60 +75,48 @@ def rebuild_master_files():
     
     with open(MENU_FILE, "w", encoding="utf-8") as f:
         f.write(menu_html)
-
     print(f"✅ Master files refreshed.")
     
 def rename_album():
-    """Renames an album within a year"""
-    year = input("Enter the YEAR of the album (e.g. 2025): ").strip()
-    old_name = input("Enter current album name: ").strip().lower().replace(" ", "_")
+    years = sorted([d.name for d in IMAGE_ROOT.iterdir() if d.is_dir() and d.name.isdigit()], reverse=True)
+    if not years: return
+    year = select_from_options(years, "Year")
+    if not year: year = input("Enter Year: ").strip()
+
+    album_options = sorted([d.name for d in (IMAGE_ROOT / year).iterdir() if d.is_dir()])
+    old_name = select_from_options(album_options, "Album")
+    if not old_name: return
+
+    new_input = input(f"\nEnter NEW name for '{old_name}': ").strip()
+    new_slug = new_input.lower().replace(" ", "_").replace("'", "")
     
-    old_folder = IMAGE_ROOT / year / old_name
+    shutil.move(str(IMAGE_ROOT / year / old_name), str(IMAGE_ROOT / year / new_slug))
     old_json = DATA_DIR / year / f"{old_name}.json"
-
-    if not old_folder.exists():
-        print(f"❌ Error: Folder '{old_folder}' not found.")
-        return
-
-    new_name = input("Enter the NEW name: ").strip().lower().replace(" ", "_")
-    new_folder = IMAGE_ROOT / year / new_name
-    new_json = DATA_DIR / year / f"{new_name}.json"
-
-    if new_folder.exists():
-        print(f"❌ Error: '{new_name}' already exists in {year}.")
-        return
-
-    try:
-        shutil.move(str(old_folder), str(new_folder))
-        if old_json.exists():
-            shutil.move(str(old_json), str(new_json))
-        print(f"✅ Renamed to '{new_name}'")
-    except Exception as e:
-        print(f"❌ Rename failed: {e}")
+    if old_json.exists():
+        shutil.move(str(old_json), str(DATA_DIR / year / f"{new_slug}.json"))
+    print(f"✅ Renamed to '{new_slug}'")
 
 def process_images():
-    """Adds images to a Year/Album structure"""
+    # --- FIXED SELECTION LOGIC ---
+    years = sorted([d.name for d in IMAGE_ROOT.iterdir() if d.is_dir() and d.name.isdigit()], reverse=True)
+    year = select_from_options(years, "Year")
+    if not year:
+        year = input("New Year (e.g. 2026): ").strip()
     
-    # 1. Ask for Year AND Album
-    year = input("Enter YEAR (e.g. 2025): ").strip()
-    if not year: year = "uncategorized"
-    
-    album_input = input("Enter album name: ").strip()
-    if not album_input: return
-    album_slug = album_input.lower().replace(" ", "_").replace("'", "")
+    albums = sorted([d.name for d in (IMAGE_ROOT / year).iterdir() if d.is_dir()]) if (IMAGE_ROOT / year).exists() else []
+    album_slug = select_from_options(albums, "Album")
+    if not album_slug:
+        album_input = input("New Album Name: ").strip()
+        album_slug = album_input.lower().replace(" ", "_").replace("'", "")
+    # -----------------------------
 
-    # 2. Setup Nested Paths
     ALBUM_ROOT = IMAGE_ROOT / year / album_slug
     ALBUM_THUMBS = ALBUM_ROOT / "thumbs"
-    
-    DATA_YEAR_DIR = DATA_DIR / year
-    ALBUM_JSON = DATA_YEAR_DIR / f"{album_slug}.json"
+    ALBUM_JSON = DATA_DIR / year / f"{album_slug}.json"
 
-    # 3. Create Directories
     ALBUM_THUMBS.mkdir(parents=True, exist_ok=True)
-    DATA_YEAR_DIR.mkdir(parents=True, exist_ok=True)
+    (DATA_DIR / year).mkdir(parents=True, exist_ok=True)
 
-    # 4. Load existing data
     images_data = []
     if ALBUM_JSON.exists():
         with open(ALBUM_JSON, "r", encoding="utf-8") as f:
@@ -144,41 +127,24 @@ def process_images():
         return max(existing, default=0) + 1
 
     files = sorted([f for f in INCOMING_DIR.iterdir() if f.suffix.lower() in IMAGE_EXTENSIONS])
-    
-    if not files:
-        print(f"No new images found in {INCOMING_DIR}")
-        return
+    if not files: return print("No images in /incoming")
     
     for img_path in files:
         idx = get_next_idx(images_data)
         new_name = f"photo_{idx:03d}.jpg"
         print(f"Processing {img_path.name}...")
         
-        try:
-            with Image.open(img_path) as img:
-                img = ImageOps.exif_transpose(img)
-                width, height = img.size
+        with Image.open(img_path) as img:
+            img = ImageOps.exif_transpose(img)
+            w, h = img.size
+            img.thumbnail(THUMB_MAX_SIZE)
+            img.convert("RGB").save(ALBUM_THUMBS / new_name, "JPEG", quality=85)
                 
-                img.thumbnail(THUMB_MAX_SIZE)
-                img.convert("RGB").save(ALBUM_THUMBS / new_name, "JPEG", quality=85)
-                
-            print(f"  Uploading to ImgBB...")
-            full_res_url = upload_to_imgbb(img_path)
-            
-            if full_res_url:
-                images_data.append({
-                    "file": new_name, 
-                    "full_url": full_res_url, 
-                    "width": width, 
-                    "height": height
-                })
-                img_path.unlink()
-                print(f"  ✅ Success: {new_name}")
-            else:
-                print(f"  ⚠️ Upload failed, skipping.")
-
-        except Exception as e:
-            print(f"  ❌ Error: {e}")
+        url = upload_to_imgbb(img_path)
+        if url:
+            images_data.append({"file": new_name, "full_url": url, "width": w, "height": h})
+            img_path.unlink()
+            print(f"  ✅ {new_name}")
 
     with open(ALBUM_JSON, "w", encoding="utf-8") as f:
         json.dump(images_data, f, indent=2)
@@ -188,9 +154,7 @@ if __name__ == "__main__":
     print("[1] Add new photos")
     print("[2] Rename an album")
     print("[3] Just refresh menu")
-    
     choice = input("\nChoose option: ").strip()
-
     if choice == "1":
         process_images()
         rebuild_master_files()
