@@ -9,8 +9,16 @@
       "file": "data/2021/eventide_2021.json"
     },
     {
+      "title": "LENSBALL",
+      "file": "data/2021/lensball.json"
+    },
+    {
       "title": "RANDOM STROLLS AND THINGS",
       "file": "data/2021/random_strolls_and_things.json"
+    },
+    {
+      "title": "THE TREE",
+      "file": "data/2021/the_tree.json"
     }
   ],
   "2022": [
@@ -21,6 +29,10 @@
     {
       "title": "LUSIN",
       "file": "data/2022/lusin.json"
+    },
+    {
+      "title": "PSS",
+      "file": "data/2022/pss.json"
     },
     {
       "title": "TWO WEEKS FROM NEVA TO MOSKVA",
