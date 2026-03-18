@@ -1,6 +1,10 @@
 {
   "2021": [
     {
+      "title": "DOGGOS AND OTHER ANIMALS",
+      "file": "data/2021/doggos_and_other_animals.json"
+    },
+    {
       "title": "EVENTIDE 2021",
       "file": "data/2021/eventide_2021.json"
     }
