@@ -7,6 +7,10 @@
     {
       "title": "EVENTIDE 2021",
       "file": "data/2021/eventide_2021.json"
+    },
+    {
+      "title": "RANDOM STROLLS AND THINGS",
+      "file": "data/2021/random_strolls_and_things.json"
     }
   ],
   "2022": [
