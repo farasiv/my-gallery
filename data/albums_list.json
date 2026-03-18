@@ -9,6 +9,10 @@
     {
       "title": "EVENTIDE 24",
       "file": "data/2024/eventide_24.json"
+    },
+    {
+      "title": "WINTER 2024",
+      "file": "data/2024/winter_2024.json"
     }
   ],
   "2025": [
