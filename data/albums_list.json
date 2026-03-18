@@ -1,4 +1,10 @@
 {
+  "2021": [
+    {
+      "title": "EVENTIDE 2021",
+      "file": "data/2021/eventide_2021.json"
+    }
+  ],
   "2022": [
     {
       "title": "EVENTIDE 2022",
