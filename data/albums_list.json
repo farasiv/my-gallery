@@ -27,6 +27,12 @@
       "file": "data/2022/two_weeks_from_neva_to_moskva.json"
     }
   ],
+  "2023": [
+    {
+      "title": "EVENTIDE 2023",
+      "file": "data/2023/eventide_2023.json"
+    }
+  ],
   "2024": [
     {
       "title": "DILIJAN JULY 24",
