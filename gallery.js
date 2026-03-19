@@ -47,6 +47,12 @@ window.addEventListener('popstate', () => {
     routeFromURL();
 });
 
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        routeFromURL();
+    }
+});
+
 // ─── MENU ────────────────────────────────────────────────────────────────────
 
 function toggleYear(yearId, forceState) {
