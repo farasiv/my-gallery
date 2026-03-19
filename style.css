@@ -200,6 +200,7 @@ nav a:hover,
 
 @media (max-width: 600px) {
     body { padding: 20px; }
-    #gallery { column-count: 1; }
-    .album-grid { grid-template-columns: 1fr; }
+    #gallery { column-count: 2; column-gap: 8px; }
+    #gallery a { margin-bottom: 8px; }
+    .album-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
 }
