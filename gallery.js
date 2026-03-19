@@ -5,7 +5,7 @@ let lightbox;
 //  Set to '' when testing locally (http://127.0.0.1:5500/)
 //  Set to '/my-gallery' before pushing to GitHub Pages
 //
-const BASE_PATH = '';
+const BASE_PATH = '/my-gallery';
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
