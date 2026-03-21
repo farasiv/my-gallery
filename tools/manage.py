@@ -58,6 +58,13 @@ def load_album_json(year, album_slug):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f), path
 
+def load_albums_list():
+    path = DATA_DIR / "albums_list.json"
+    if not path.exists():
+        return {}, path
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f), path
+
 def save_album_json(data, path):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
@@ -66,7 +73,6 @@ def reindex_album(images_data, ALBUM_THUMBS, ALBUM_JSON):
     """Re-indexes all thumbnails sequentially using a two-pass approach."""
     print("\n🔄 Re-indexing all images...")
 
-    # Pass 1: rename all thumbs to temp names tied to their current item
     temp_map = []
     for item in images_data:
         old_file = item['file']
@@ -76,7 +82,6 @@ def reindex_album(images_data, ALBUM_THUMBS, ALBUM_JSON):
             thumb.rename(ALBUM_THUMBS / temp_name)
         temp_map.append((temp_name, item))
 
-    # Pass 2: rename from temp to final sequential names
     new_data = []
     for idx, (temp_name, item) in enumerate(temp_map, 1):
         new_name = f"photo_{idx:03d}.jpg"
@@ -92,6 +97,16 @@ def reindex_album(images_data, ALBUM_THUMBS, ALBUM_JSON):
 
 def rebuild_master_files():
     print("\nRefreshing master files...")
+
+    # Load existing albums_list to preserve any cover settings
+    existing, _ = load_albums_list()
+    # Build a lookup of existing cover values keyed by file path
+    cover_lookup = {}
+    for year_albums in existing.values():
+        for album in year_albums:
+            if "cover" in album:
+                cover_lookup[album["file"]] = album["cover"]
+
     structure = {}
     for year_folder in sorted(IMAGE_ROOT.iterdir()):
         if year_folder.is_dir() and year_folder.name.isdigit():
@@ -103,7 +118,12 @@ def rebuild_master_files():
                     display_name = album_slug.replace('_', ' ').upper()
                     if "CHILDRENS RAILWAY" in display_name:
                         display_name = display_name.replace("CHILDRENS", "CHILDREN'S")
-                    structure[year].append({"title": display_name, "file": f"data/{year}/{album_slug}.json"})
+                    file_path = f"data/{year}/{album_slug}.json"
+                    entry = {"title": display_name, "file": file_path}
+                    # Preserve existing cover setting if present
+                    if file_path in cover_lookup:
+                        entry["cover"] = cover_lookup[file_path]
+                    structure[year].append(entry)
 
     with open(DATA_DIR / "albums_list.json", "w", encoding="utf-8") as f:
         json.dump(structure, f, indent=2)
@@ -122,7 +142,7 @@ def rebuild_master_files():
 
 # ─── PREVIEW ─────────────────────────────────────────────────────────────────
 
-def show_preview(year, album_slug, images_data):
+def show_preview(year, album_slug, images_data, current_cover=None):
     """Generates a numbered HTML thumbnail grid and opens it in the browser."""
     ALBUM_THUMBS = IMAGE_ROOT / year / album_slug / "thumbs"
 
@@ -130,8 +150,8 @@ def show_preview(year, album_slug, images_data):
     for item in images_data:
         num = item['file'].split('_')[1].split('.')[0]
         thumb_path = ALBUM_THUMBS / item['file']
+        is_cover = current_cover is not None and int(num) == int(current_cover)
 
-        # Embed thumbnail as base64 so the HTML works without a server
         if thumb_path.exists():
             with open(thumb_path, "rb") as f:
                 b64 = base64.b64encode(f.read()).decode()
@@ -139,10 +159,13 @@ def show_preview(year, album_slug, images_data):
         else:
             img_src = ""
 
+        cover_badge = '<div class="cover-badge">COVER</div>' if is_cover else ''
+
         cards += f"""
-        <div class="card">
+        <div class="card{'  cover' if is_cover else ''}">
             <img src="{img_src}" alt="{item['file']}">
             <div class="num">{num}</div>
+            {cover_badge}
         </div>"""
 
     title = f"{album_slug.replace('_', ' ').upper()} — {year}"
@@ -160,10 +183,15 @@ def show_preview(year, album_slug, images_data):
   .card {{ position: relative; width: 160px; }}
   .card img {{ width: 160px; height: 120px; object-fit: cover;
                border-radius: 6px; display: block; background: #333; }}
+  .card.cover img {{ outline: 2px solid #fff; outline-offset: -2px; }}
   .num {{ position: absolute; bottom: 6px; left: 6px;
           background: rgba(0,0,0,0.75); color: #fff;
           font-size: 13px; font-weight: bold; padding: 2px 7px;
           border-radius: 4px; letter-spacing: 1px; }}
+  .cover-badge {{ position: absolute; top: 6px; right: 6px;
+                  background: #fff; color: #000;
+                  font-size: 10px; font-weight: bold; padding: 2px 6px;
+                  border-radius: 3px; letter-spacing: 1px; }}
 </style>
 </head>
 <body>
@@ -172,7 +200,6 @@ def show_preview(year, album_slug, images_data):
 </body>
 </html>"""
 
-    # Write to a temp file and open in browser
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w", encoding="utf-8")
     tmp.write(html)
     tmp.close()
@@ -194,7 +221,6 @@ def delete_photos():
 
     user_input = input("\nWhich photo number(s) to delete? (e.g. 5, 9 or 5-9): ").strip()
 
-    # Parse ranges like "5-9" and individual numbers like "5, 9"
     targets = set()
     for part in user_input.replace(",", " ").split():
         if "-" in part:
@@ -218,7 +244,6 @@ def delete_photos():
         print("No matching photos found.")
         return
 
-    # Re-index to close gaps left by deletion
     reindex_album(new_data, ALBUM_THUMBS, ALBUM_JSON)
     rebuild_master_files()
     print(f"\n✅ Deleted {deleted} photo(s) and re-indexed album.")
@@ -295,6 +320,102 @@ def rename_album():
 
     rebuild_master_files()
     print(f"✅ Renamed to '{new_slug}'")
+
+def set_cover():
+    """Set the cover photo for an album card, and optionally for the year card."""
+    print("\nSet cover for:")
+    print("  [1] An album card")
+    print("  [2] A year card (home screen)")
+    sub = input("\nChoose: ").strip()
+
+    if sub == "1":
+        year, album_slug = get_year_and_album()
+        if not album_slug: return
+
+        images_data, _ = load_album_json(year, album_slug)
+        if images_data is None: return
+
+        # Load current cover if set
+        albums_list, albums_list_path = load_albums_list()
+        current_cover = None
+        for album in albums_list.get(year, []):
+            if album["file"] == f"data/{year}/{album_slug}.json":
+                current_cover = album.get("cover")
+                break
+
+        show_preview(year, album_slug, images_data, current_cover)
+
+        print(f"\nCurrent cover: photo {'%03d' % current_cover if current_cover else '001 (default — first photo)'}")
+        choice = input("Enter photo number for new cover (or press Enter to keep default): ").strip()
+
+        # Update albums_list.json
+        for album in albums_list.get(year, []):
+            if album["file"] == f"data/{year}/{album_slug}.json":
+                if choice:
+                    album["cover"] = int(choice)
+                    print(f"✅ Cover set to photo {int(choice):03d}")
+                else:
+                    album.pop("cover", None)
+                    print("✅ Cover reset to default (first photo)")
+                break
+
+        with open(albums_list_path, "w", encoding="utf-8") as f:
+            json.dump(albums_list, f, indent=2)
+
+    elif sub == "2":
+        years = sorted([d.name for d in IMAGE_ROOT.iterdir() if d.is_dir() and d.name.isdigit()], reverse=True)
+        year = select_from_options(years, "Year")
+        if not year: return
+
+        albums_list, albums_list_path = load_albums_list()
+        year_albums = albums_list.get(year, [])
+        if not year_albums:
+            print("No albums found for this year.")
+            return
+
+        # Show which albums are available and their current cover status
+        print(f"\nAvailable albums in {year}:")
+        for i, album in enumerate(year_albums, 1):
+            slug = album["file"].split('/')[-1].replace('.json', '')
+            cover = album.get("cover", "default")
+            print(f"  [{i}] {album['title']} (cover: photo {cover:03d})" if cover != "default" else f"  [{i}] {album['title']} (cover: default)")
+
+        album_choice = input("\nSelect which album to pull the cover photo from (number): ").strip()
+        try:
+            selected_album = year_albums[int(album_choice) - 1]
+        except (ValueError, IndexError):
+            print("Invalid choice.")
+            return
+
+        album_slug = selected_album["file"].split('/')[-1].replace('.json', '')
+        images_data, _ = load_album_json(year, album_slug)
+        if images_data is None: return
+
+        current_year_cover = albums_list.get(year, [{}])[0].get("year_cover")
+        show_preview(year, album_slug, images_data)
+
+        choice = input("\nEnter photo number for year card cover (or press Enter for default): ").strip()
+
+        # Store year cover as {album_slug, photo_number} on the first album entry
+        # (year-level cover is stored on the year's first album entry for simplicity)
+        if choice:
+            for album in albums_list.get(year, []):
+                album.pop("year_cover_album", None)
+                album.pop("year_cover_photo", None)
+            year_albums[0]["year_cover_album"] = album_slug
+            year_albums[0]["year_cover_photo"] = int(choice)
+            print(f"✅ Year {year} card cover set to {album_slug} / photo {int(choice):03d}")
+        else:
+            for album in year_albums:
+                album.pop("year_cover_album", None)
+                album.pop("year_cover_photo", None)
+            print(f"✅ Year {year} card cover reset to default")
+
+        with open(albums_list_path, "w", encoding="utf-8") as f:
+            json.dump(albums_list, f, indent=2)
+
+    else:
+        print("Invalid choice.")
 
 def sanitize_filename(path):
     clean_name = re.sub(r'[^\w.\-]', '_', path.name)
@@ -445,6 +566,7 @@ if __name__ == "__main__":
     print("  [4] Swap / reorder photos")
     print("  [5] Rename an album")
     print("  [6] Refresh menu")
+    print("  [7] Set cover photo")
     print("───────────────────────────────────────────────────")
 
     choice = input("\nChoose option: ").strip()
@@ -461,5 +583,7 @@ if __name__ == "__main__":
         rename_album()
     elif choice == "6":
         rebuild_master_files()
+    elif choice == "7":
+        set_cover()
     else:
         print("Invalid choice.")

@@ -214,6 +214,7 @@ body {
     padding: 3px 0;
     transition: color 0.2s;
     white-space: nowrap;
+    cursor: pointer;
 }
 
 .menu-albums a:hover,

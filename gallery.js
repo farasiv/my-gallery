@@ -67,6 +67,31 @@ function toTitleCase(str) {
     );
 }
 
+// ─── COVER HELPERS ───────────────────────────────────────────────────────────
+
+// Returns the thumbnail filename to use for an album card
+// Uses album.cover if set, otherwise falls back to images[0].file
+function getAlbumCoverFile(album, images) {
+    if (album.cover) {
+        return `photo_${String(album.cover).padStart(3, '0')}.jpg`;
+    }
+    return images[0].file;
+}
+
+// Returns {albumSlug, coverFile} for a year card
+// Uses year_cover_album/year_cover_photo if set on first album entry
+function getYearCover(yearAlbums, year) {
+    const first = yearAlbums[0];
+    if (first.year_cover_album && first.year_cover_photo) {
+        return {
+            slug: first.year_cover_album,
+            file: `photo_${String(first.year_cover_photo).padStart(3, '0')}.jpg`
+        };
+    }
+    // Default: first album's first photo
+    return null;
+}
+
 // ─── URL ROUTING ─────────────────────────────────────────────────────────────
 
 function routeFromURL() {
@@ -187,7 +212,6 @@ function loadMenu() {
                 const id = node.id || '';
                 const classes = node.className || '';
 
-                // Skip the HOME link
                 if (tag === 'a' && onclick.includes('showHome')) return;
 
                 if (onclick.includes('toggleYear')) {
@@ -254,12 +278,22 @@ async function showHome(push = true) {
             const albumsInYear = structure[year];
             if (albumsInYear.length === 0) continue;
 
-            const firstAlbum = albumsInYear[0];
-            const albRes = await fetch(rootPath(firstAlbum.file));
-            const images = await albRes.json();
+            // Determine which album and photo to use for the year card cover
+            const yearCover = getYearCover(albumsInYear, year);
+            let thumbPath;
 
-            const slug = firstAlbum.file.split('/').pop().replace('.json', '');
-            const thumbPath = rootPath(`images/${year}/${slug}/thumbs/${images[0].file}`);
+            if (yearCover) {
+                // Use the specified cover photo from the specified album
+                thumbPath = rootPath(`images/${year}/${yearCover.slug}/thumbs/${yearCover.file}`);
+            } else {
+                // Default: first album's cover photo (or first photo)
+                const firstAlbum = albumsInYear[0];
+                const albRes = await fetch(rootPath(firstAlbum.file));
+                const images = await albRes.json();
+                const slug = firstAlbum.file.split('/').pop().replace('.json', '');
+                const coverFile = getAlbumCoverFile(firstAlbum, images);
+                thumbPath = rootPath(`images/${year}/${slug}/thumbs/${coverFile}`);
+            }
 
             const card = document.createElement('div');
             card.className = 'album-card';
@@ -315,12 +349,15 @@ async function loadYearView(year, push = true) {
             const images = await albRes.json();
             const albumSlug = album.file.split('/').pop().replace('.json', '');
 
+            // Use cover photo if set, otherwise first photo
+            const coverFile = getAlbumCoverFile(album, images);
+
             const card = document.createElement('div');
             card.className = 'album-card';
             card.onclick = () => loadAlbum(album.file);
 
             card.innerHTML = `
-                <img src="${rootPath(`images/${year}/${albumSlug}/thumbs/${images[0].file}`)}" loading="lazy">
+                <img src="${rootPath(`images/${year}/${albumSlug}/thumbs/${coverFile}`)}" loading="lazy">
                 <div class="album-info">
                     <h2>${album.title}</h2>
                     <span>${images.length} Photos</span>

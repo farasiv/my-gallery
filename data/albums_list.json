@@ -62,41 +62,52 @@
   "2025": [
     {
       "title": "CHILDREN'S RAILWAY",
-      "file": "data/2025/childrens_railway.json"
+      "file": "data/2025/childrens_railway.json",
+      "cover": 6,
+      "year_cover_album": "spring_2025",
+      "year_cover_photo": 17
     },
     {
       "title": "EVENTIDE",
-      "file": "data/2025/eventide.json"
+      "file": "data/2025/eventide.json",
+      "cover": 11
     },
     {
       "title": "FEBRUARY 2025",
-      "file": "data/2025/february_2025.json"
+      "file": "data/2025/february_2025.json",
+      "cover": 16
     },
     {
       "title": "SEVAN MAY 2025",
-      "file": "data/2025/sevan_may_2025.json"
+      "file": "data/2025/sevan_may_2025.json",
+      "cover": 10
     },
     {
       "title": "SPRING 2025",
-      "file": "data/2025/spring_2025.json"
+      "file": "data/2025/spring_2025.json",
+      "cover": 2
     },
     {
       "title": "VICTORY PARK",
-      "file": "data/2025/victory_park.json"
+      "file": "data/2025/victory_park.json",
+      "cover": 40
     },
     {
       "title": "WINTER 2025",
-      "file": "data/2025/winter_2025.json"
+      "file": "data/2025/winter_2025.json",
+      "cover": 16
     },
     {
       "title": "YEREVAN WALKS JANUARY 2025",
-      "file": "data/2025/yerevan_walks_january_2025.json"
+      "file": "data/2025/yerevan_walks_january_2025.json",
+      "cover": 32
     }
   ],
   "2026": [
     {
       "title": "WINTER 2026",
-      "file": "data/2026/winter_2026.json"
+      "file": "data/2026/winter_2026.json",
+      "cover": 10
     }
   ]
 }
