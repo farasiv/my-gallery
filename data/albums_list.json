@@ -63,9 +63,7 @@
     {
       "title": "CHILDREN'S RAILWAY",
       "file": "data/2025/childrens_railway.json",
-      "cover": 6,
-      "year_cover_album": "spring_2025",
-      "year_cover_photo": 17
+      "cover": 6
     },
     {
       "title": "EVENTIDE",
@@ -104,6 +102,10 @@
     }
   ],
   "2026": [
+    {
+      "title": "EVENTIDE",
+      "file": "data/2026/eventide.json"
+    },
     {
       "title": "WINTER 2026",
       "file": "data/2026/winter_2026.json",
