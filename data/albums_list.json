@@ -103,6 +103,10 @@
   ],
   "2026": [
     {
+      "title": "B&W",
+      "file": "data/2026/b&w.json"
+    },
+    {
       "title": "EVENTIDE",
       "file": "data/2026/eventide.json"
     },
